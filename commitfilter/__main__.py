@@ -4,6 +4,7 @@
 """
 import sys
 from argparse import ArgumentParser
+import subprocess
 
 from pygit2 import init_repository
 from pygit2 import GIT_SORT_TOPOLOGICAL, GIT_SORT_REVERSE
@@ -38,7 +39,12 @@ def main():
 
         short_message = commit.message.split('\n')[0]
         print '\033[1m\033[94m[' + short_hash(commit) + ']\033[0m', short_message
-        print diff.patch
+
+        if len(commit.parents) == 1:
+            subprocess.call(['git', '--no-pager', 'diff', str(commit.id), str(commit.parents[0].id)])
+            print ''
+        else:
+            print diff.patch
 
         total_commits += 1
 
